@@ -2620,10 +2620,9 @@ def compile_fp8fp4_gemm(
         gz = split_k
 
         if const_expr(use_cluster):
-            # Cluster launch needs a cluster-divisible grid
+            # Fixed cluster metadata needs a cluster-divisible grid.
             gx = ((gx + (cluster_m - 1)) // cluster_m) * cluster_m
 
-        cluster_arg = (cluster_m, cluster_n, 1) if use_cluster else None
         kernel_mxscale_gemm(
             arg_c,
             arg_a,
@@ -2642,7 +2641,6 @@ def compile_fp8fp4_gemm(
             grid=(gx, gy, gz),
             block=(block_threads, 1, 1),
             stream=stream,
-            cluster=cluster_arg,
         )
 
     if effective_expert_sched_mode:
